@@ -7,6 +7,7 @@ import { ClientFactory } from '#database/factories/client_factory'
 
 test.group('Client transaction', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
+
   test('it should be able to create a credit transaction to a client').run(
     async ({ client: apiClient, assert }) => {
       const client = await ClientFactory.create()
@@ -81,7 +82,7 @@ test.group('Client transaction', (group) => {
 
       response.assertStatus(422)
     })
-    .skip(true, 'This will not be tested in the code challenge')
+    .skip(false, 'This will not be tested in the code challenge')
 
   test(
     'it should not be able to create a debit transaction with lower amount than client limit'
@@ -95,8 +96,6 @@ test.group('Client transaction', (group) => {
     }
 
     const response = await apiClient.post(`clientes/${client.id}/transacoes`).json(request)
-
-    console.log(response.body())
 
     response.assertStatus(422)
   })

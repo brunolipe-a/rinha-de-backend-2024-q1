@@ -9,7 +9,7 @@ export default class extends BaseSchema {
 
       table.integer('client_id').unsigned().references('clients.id').onDelete('CASCADE')
       table.integer('amount').unsigned()
-      table.enum('type', ['credit', 'debit'])
+      table.enum('type', ['c', 'd'])
       table.string('description', 10)
 
       table.timestamp('created_at')

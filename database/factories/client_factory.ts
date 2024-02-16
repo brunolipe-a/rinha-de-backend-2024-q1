@@ -1,5 +1,6 @@
 import factory from '@adonisjs/lucid/factories'
 import Client from '#models/client'
+import { TransactionFactory } from './transaction_factory.js'
 
 export const ClientFactory = factory
   .define(Client, async ({ faker }) => {
@@ -8,4 +9,5 @@ export const ClientFactory = factory
       balance: 0,
     }
   })
+  .relation('transactions', () => TransactionFactory)
   .build()

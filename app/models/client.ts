@@ -1,4 +1,7 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+
+import Transaction from './transaction.js'
 
 export default class Client extends BaseModel {
   @column({ isPrimary: true })
@@ -9,4 +12,7 @@ export default class Client extends BaseModel {
 
   @column()
   declare balance: number
+
+  @hasMany(() => Transaction)
+  declare transactions: HasMany<typeof Transaction>
 }

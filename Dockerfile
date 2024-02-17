@@ -30,4 +30,5 @@ COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app
 RUN mkdir /app/tmp
 EXPOSE 3333
+
 CMD node ace migration:run --force && node ace db:seed && node ./bin/server.js

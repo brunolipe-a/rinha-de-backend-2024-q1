@@ -8,7 +8,7 @@
 <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" alt="logo postgres" width="200" height="auto">
 
 
-## Francisco Zanfranceschi
+## Bruno Felipe
 Submissão feita com:
 - `nginx` como load balancer
 - `postgres` como banco de dados

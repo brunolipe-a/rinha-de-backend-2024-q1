@@ -68,12 +68,12 @@ test.group('Client transaction', (group) => {
     }
   )
 
-  test('it should not be able to create a transaction with invalid data')
-    .run(async ({ client: apiClient }) => {
+  test('it should not be able to create a transaction with invalid data').run(
+    async ({ client: apiClient }) => {
       const client = await ClientFactory.create()
 
       const request = {
-        valor: 'invalid',
+        valor: 1.2,
         tipo: 'something',
         descricao: 'Long text with more than 10 characters',
       }
@@ -81,8 +81,8 @@ test.group('Client transaction', (group) => {
       const response = await apiClient.post(`clientes/${client.id}/transacoes`).json(request)
 
       response.assertStatus(422)
-    })
-    .skip(false, 'This will not be tested in the code challenge')
+    }
+  )
 
   test(
     'it should not be able to create a debit transaction with lower amount than client limit'

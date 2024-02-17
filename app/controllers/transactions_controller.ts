@@ -14,7 +14,6 @@ export default class TransactionsController {
     const client = await Client.findOrFail(params.id)
 
     const { valor, tipo, descricao } = await request.validateUsing(createTransaction)
-    // const { valor, tipo, descricao } = request.all()
 
     const { newBalance } = await this.transactionService.createTransaction(client, {
       amount: valor,

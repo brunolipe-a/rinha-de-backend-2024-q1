@@ -20,11 +20,11 @@ test.group('Client extract', (group) => {
       },
     })
 
-    const { saldo, ultimas_transacoes } = response.body()
+    const { saldo, ultimas_transacoes: transacoes } = response.body()
 
     assert.isTrue(DateTime.fromISO(saldo.data_extrato).isValid)
 
-    assert.lengthOf(ultimas_transacoes, 10)
-    assert.properties(ultimas_transacoes[0], ['id', 'valor', 'tipo', 'descricao', 'realizada_em'])
+    assert.lengthOf(transacoes, 10)
+    assert.properties(transacoes[0], ['id', 'valor', 'tipo', 'descricao', 'realizada_em'])
   })
 })

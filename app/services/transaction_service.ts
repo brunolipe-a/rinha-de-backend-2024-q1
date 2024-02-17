@@ -1,3 +1,5 @@
+import db from '@adonisjs/lucid/services/db'
+
 import Client from '#models/client'
 import { TransactionType } from '#models/transaction'
 import InvalidDebitAmountException from '#exceptions/invalid_debit_amount_exception'
@@ -10,32 +12,40 @@ interface CreateTransactionDto {
 
 export class TransactionService {
   async createTransaction(client: Client, dto: CreateTransactionDto) {
-    const transaction = await client.related('transactions').create(dto)
+    const trx = await db.transaction()
 
-    const { newBalance } = await this.updateBalance(client, dto.type, dto.amount)
+    client.useTransaction(trx)
 
-    return { transaction, newBalance }
+    try {
+      const { newBalance } = await this.updateBalance(client, dto.type, dto.amount)
+
+      const transaction = await client.related('transactions').create(dto)
+
+      await trx.commit()
+
+      return { transaction, newBalance }
+    } catch (err) {
+      await trx.rollback()
+
+      throw err
+    }
   }
 
   private async updateBalance(client: Client, type: TransactionType, amount: number) {
-    if (type === TransactionType.CREDIT) {
-      await Client.query().increment('balance', amount).where('id', client.id)
+    amount = type === TransactionType.CREDIT ? amount : amount * -1
 
-      return { newBalance: client.balance + amount }
-    }
+    const result = await Client.query({ client: client.$trx })
+      .increment('balance', amount)
+      .where('id', client.id)
+      .returning(['balance'])
 
-    this.validateDebitAmount(client, amount)
+    const { balance } = result[0] as Client
 
-    await Client.query().decrement('balance', amount).where('id', client.id)
-
-    return { newBalance: client.balance - amount }
-  }
-
-  private validateDebitAmount(client: Client, debitAmount: number) {
-    const newBalance = client.balance - debitAmount
-
-    if (newBalance < client.limit * -1) {
+    if (balance < client.limit * -1) {
+      // Valor do saldo não pode menor do que o limite negativo
       throw new InvalidDebitAmountException()
     }
+
+    return { newBalance: balance }
   }
 }
